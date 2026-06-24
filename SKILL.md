@@ -125,7 +125,7 @@ Follow [references/style-guide.md](references/style-guide.md) exactly:
 - White background, no dark theme
 
 Start from [templates/pipeline-diagram.template.html](templates/pipeline-diagram.template.html).
-Reference visuals live in [ref_pictures/](ref_pictures/) — read 1–2 before drawing.
+See [examples/libri-light-cpc-pipeline.html](examples/libri-light-cpc-pipeline.html) for a worked output.
 
 Save to `diagrams/<slug>-pipeline.html` (workspace) or user-specified path.
 Use a filesystem-safe slug from paper title + pipeline name.

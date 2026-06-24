@@ -1,7 +1,6 @@
 # Flowchart Draw — Visual Style Guide
 
-Match the reference images in `ref_pictures/` and the worked example at
-`../../diagrams/cpc-unsupervised-baseline.html` (if present in workspace).
+Match the worked example at [examples/libri-light-cpc-pipeline.html](../examples/libri-light-cpc-pipeline.html).
 
 ## Design principles
 

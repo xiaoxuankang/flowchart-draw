@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><!-- TITLE --></title>
+  <title>CPC Unsupervised Baseline</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -11,22 +11,20 @@
       font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       background: #fff;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 40px 24px 56px;
+      padding: 40px 24px;
     }
 
     .diagram {
       display: flex;
       align-items: center;
       gap: 0;
-      max-width: 1200px;
-      flex-wrap: nowrap;
+      max-width: 1100px;
     }
 
-    /* ── Input block (optional — remove if not needed) ── */
+    /* ── Input: audio stack ── */
     .input-block {
       display: flex;
       flex-direction: column;
@@ -36,13 +34,13 @@
       flex-shrink: 0;
     }
 
-    .input-icon {
+    .audio-icon {
+      position: relative;
       width: 56px;
       height: 68px;
-      position: relative;
     }
 
-    .doc-sheet {
+    .audio-sheet {
       position: absolute;
       width: 44px;
       height: 52px;
@@ -51,15 +49,24 @@
       border-radius: 4px;
     }
 
-    .doc-sheet:nth-child(1) { top: 0;  left: 0;  }
-    .doc-sheet:nth-child(2) { top: 6px; left: 6px; background: #fafafa; }
-    .doc-sheet:nth-child(3) { top: 12px; left: 12px; background: #fff;
+    .audio-sheet:nth-child(1) { top: 0;  left: 0;  }
+    .audio-sheet:nth-child(2) { top: 6px; left: 6px; background: #fafafa; }
+    .audio-sheet:nth-child(3) { top: 12px; left: 12px; background: #fff;
       display: flex; align-items: center; justify-content: center; }
 
-    .doc-lines { display: flex; flex-direction: column; gap: 4px; width: 28px; }
-    .doc-lines span { display: block; height: 3px; background: #aaa; border-radius: 1px; }
-    .doc-lines span:nth-child(2) { width: 80%; }
-    .doc-lines span:nth-child(3) { width: 60%; }
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 24px;
+    }
+
+    .waveform span {
+      display: block;
+      width: 3px;
+      background: #888;
+      border-radius: 1px;
+    }
 
     .input-label {
       font-size: 15px;
@@ -70,7 +77,6 @@
     }
 
     .input-sub {
-      display: block;
       font-size: 11px;
       font-weight: 400;
       color: #666;
@@ -121,16 +127,10 @@
     .stage-inner {
       display: flex;
       align-items: center;
-      gap: 0;
+      gap: 16px;
     }
 
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* ── Colored boxes ── */
+    /* ── Boxes ── */
     .box {
       border-radius: 14px;
       border: 1.5px solid rgba(0,0,0,0.12);
@@ -149,14 +149,17 @@
       font-weight: 400;
       color: #555;
       margin-top: 3px;
-      white-space: normal;
     }
 
-    .box-pink   { background: #f5c6cb; }
+    .box-pink  { background: #f5c6cb; }
     .box-yellow { background: #fff3cd; }
-    .box-blue   { background: #cce5ff; }
-    .box-green  { background: #c3e6cb; }
-    .box-orange { background: #ffddc1; }
+    .box-blue  { background: #cce5ff; }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .ellipsis {
       font-size: 22px;
@@ -167,8 +170,11 @@
       flex-shrink: 0;
     }
 
+    /* caption below diagram */
     .caption-wrap {
-      margin-top: 28px;
+      position: fixed;
+      bottom: 16px;
+      left: 0; right: 0;
       text-align: center;
       font-size: 12px;
       color: #999;
@@ -177,53 +183,70 @@
 </head>
 <body>
 
-  <!--
-    REPLACE the diagram body below.
-    See references/style-guide.md and examples/libri-light-cpc-pipeline.html for patterns.
-
-    Typical structure:
-      input-block → arrow → stage(s) → arrow → ellipsis (optional)
-  -->
-
   <div class="diagram" id="diagram">
 
-    <!-- INPUT (optional) -->
+    <!-- Input -->
     <div class="input-block">
-      <div class="input-icon">
-        <div class="doc-sheet"></div>
-        <div class="doc-sheet"></div>
-        <div class="doc-sheet">
-          <div class="doc-lines">
-            <span></span><span></span><span></span>
+      <div class="audio-icon">
+        <div class="audio-sheet"></div>
+        <div class="audio-sheet"></div>
+        <div class="audio-sheet">
+          <div class="waveform">
+            <span style="height:8px"></span>
+            <span style="height:16px"></span>
+            <span style="height:22px"></span>
+            <span style="height:14px"></span>
+            <span style="height:20px"></span>
+            <span style="height:10px"></span>
+            <span style="height:18px"></span>
           </div>
         </div>
       </div>
       <div class="input-label">
-        <!-- INPUT_LABEL -->
-        <span class="input-sub"><!-- INPUT_SUB --></span>
+        Unlabeled Audio
+        <span class="input-sub">unlab-600 / 6k / 60k</span>
       </div>
     </div>
 
     <div class="arrow"></div>
 
-    <!-- STAGE 1 -->
+    <!-- Stage 1: Encoding -->
     <div class="stage">
-      <div class="stage-title"><!-- STAGE_1_NAME --></div>
+      <div class="stage-title">Encoding</div>
       <div class="stage-inner">
-        <div class="box box-pink"><!-- STEP --><small><!-- SUB --></small></div>
+        <div class="box box-pink">
+          CNN Encoder
+          <small>5 layers · 10 ms/frame · 256-d</small>
+        </div>
         <div class="arrow"></div>
-        <div class="box box-yellow"><!-- STEP --><small><!-- SUB --></small></div>
+        <div class="stack">
+          <div class="box box-yellow">
+            LSTM
+            <small>phonetic embedding</small>
+          </div>
+          <div class="box box-yellow">
+            Transformer Predictor
+            <small>future steps 1–12</small>
+          </div>
+          <div class="box box-yellow" style="font-size:20px; padding:6px 20px;">…</div>
+        </div>
       </div>
     </div>
 
     <div class="arrow"></div>
 
-    <!-- STAGE 2 (vertical stack example) -->
+    <!-- Stage 2: Learning -->
     <div class="stage">
-      <div class="stage-title"><!-- STAGE_2_NAME --></div>
+      <div class="stage-title">Learning</div>
       <div class="stack">
-        <div class="box box-blue"><!-- STEP --><small><!-- SUB --></small></div>
-        <div class="box box-blue"><!-- STEP --><small><!-- SUB --></small></div>
+        <div class="box box-blue">
+          InfoNCE Loss
+          <small>predict ↔ future frames</small>
+        </div>
+        <div class="box box-blue">
+          ABX Evaluation
+          <small>phonetic discrimination</small>
+        </div>
         <div class="box box-blue" style="font-size:20px; padding:6px 20px;">…</div>
       </div>
     </div>
@@ -233,7 +256,7 @@
 
   </div>
 
-  <div class="caption-wrap"><!-- CAPTION --></div>
+  <div class="caption-wrap">Libri-light · Unsupervised baseline · CPC</div>
 
 </body>
 </html>

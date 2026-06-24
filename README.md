@@ -2,6 +2,12 @@
 
 An agent skill that reads NLP/ML papers by **DOI or arXiv URL**, finds methodology and baseline sections described in prose without flowcharts, and generates **colored HTML pipeline diagrams** for readers.
 
+## Overview
+
+![Libri-Light CPC unsupervised baseline pipeline](examples/libri-light-cpc-pipeline.png)
+
+*Example output — CPC unsupervised baseline from [Libri-Light (arXiv:1912.07875)](https://arxiv.org/abs/1912.07875). Sources: [HTML](examples/libri-light-cpc-pipeline.html) · [PNG](examples/libri-light-cpc-pipeline.png)*
+
 ## Why I need flowchart-draw
 
 When reading NLP or speech papers, authors often describe baselines and pipelines in long paragraphs — encoder stacks, loss functions, preprocessing steps — but provide **no figure** to visualize the flow. Reconstructing the architecture from text alone is slow and error-prone, especially when comparing multiple baselines (unsupervised vs semi-supervised vs distant supervision).
@@ -65,9 +71,7 @@ Diagrams follow the spec in [`references/style-guide.md`](references/style-guide
 - Optional input icon block on the far left (documents, audio waveform, etc.)
 - White background, no dark theme — suitable for papers and slides
 
-**Example output** (generated from [Libri-Light, arXiv:1912.07875](https://arxiv.org/abs/1912.07875)):
-
-See [`examples/libri-light-cpc-pipeline.html`](examples/libri-light-cpc-pipeline.html) — CPC unsupervised baseline: Unlabeled Audio → CNN Encoder → LSTM / Transformer Predictor → InfoNCE → ABX.
+**Example output** (generated from [Libri-Light, arXiv:1912.07875](https://arxiv.org/abs/1912.07875)) — see [Overview](#overview) above, or [`examples/libri-light-cpc-pipeline.html`](examples/libri-light-cpc-pipeline.html).
 
 ---
 

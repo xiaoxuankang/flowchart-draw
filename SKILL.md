@@ -4,8 +4,10 @@ description: >
   Reads NLP/ML papers by DOI, detects methodology or baseline sections that
   describe pipelines in prose without flowcharts, and generates colored HTML
   pipeline diagrams (dashed stage boxes, colored step boxes, black arrows).
+  Also supports editing SVG diagrams and exporting HTML diagrams to PNG.
   Use when user gives a paper DOI, asks to visualize a baseline/pipeline/architecture,
-  wants a flowchart from a paper, or mentions NLP pipeline diagrams.
+  wants a flowchart from a paper, mentions NLP pipeline diagrams, SVG edits,
+  or HTML to PNG export.
 ---
 
 # Flowchart Draw
@@ -36,6 +38,7 @@ Flowchart Draw Progress:
 - [ ] Step 4: Extract structured pipeline (stages, steps, order, I/O)
 - [ ] Step 5: Generate HTML diagram (style guide)
 - [ ] Step 6: Save file and show preview path
+- [ ] Step 7 (optional): Export PNG and/or provide editable SVG
 ```
 
 ## Step 1 — Fetch paper
@@ -136,7 +139,37 @@ Tell the user:
 - Saved file path
 - How to open (`file://` or `Open with Live Server`)
 - One-sentence summary of what the diagram shows
-- Offer to adjust colors, add/remove steps, or draw another candidate
+- Offer PNG export, SVG edit, color/step tweaks, or another candidate
+
+## Step 7 — SVG editing (optional)
+
+When the user wants a **vector-editable** diagram (slides, LaTeX, Inkscape/Figma):
+
+1. Copy [templates/pipeline-diagram.template.svg](templates/pipeline-diagram.template.svg)
+2. Fill labels using the same pipeline schema from Step 4
+3. Save as `diagrams/<slug>-pipeline.svg`
+4. Follow [references/svg-editing.md](references/svg-editing.md) for edits
+
+**Agent edits:** change `<text>` labels, `fill` colors on `<rect>`, and `x`/`y` positions.
+**User edits:** open in Inkscape, Figma, Illustrator, or VS Code.
+
+Offer SVG when user says: "edit in vector", "for my slide", "export svg", "inkscape".
+
+## Step 8 — HTML → PNG export (optional)
+
+After HTML is saved, export a shareable PNG:
+
+```bash
+python scripts/html_to_png.py diagrams/<slug>-pipeline.html -o diagrams/<slug>-pipeline.png --scale 2
+```
+
+- Default crops to `.diagram` selector with padding
+- Use `--full-page` for multi-row layouts (class `.rows`)
+- Requires: `pip install playwright && playwright install chromium`
+
+See [references/png-export.md](references/png-export.md) for flags and troubleshooting.
+
+Offer PNG when user says: "export png", "for my paper", "screenshot", "embed in README".
 
 ## Common adjustments
 
@@ -145,11 +178,14 @@ Tell the user:
 | Add baseline comparison | Duplicate stage row or second diagram file |
 | Match paper colors | Swap `box-*` classes per stage theme |
 | Simpler diagram | Collapse substeps into one box with `<small>` details |
-| Export PNG | Open HTML → browser print/screenshot, or ask user preference |
+| Edit SVG | Update `.svg` text/fills; see svg-editing.md |
+| Export PNG | Run `scripts/html_to_png.py` on the `.html` file |
 
 ## Additional references
 
 - Visual spec: [references/style-guide.md](references/style-guide.md)
+- SVG editing: [references/svg-editing.md](references/svg-editing.md)
+- PNG export: [references/png-export.md](references/png-export.md)
 - Detection rules: [references/detection-heuristics.md](references/detection-heuristics.md)
 - DOI fallbacks: [references/paper-fetch.md](references/paper-fetch.md)
 - Worked example: [EXAMPLES.md](EXAMPLES.md)

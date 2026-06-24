@@ -26,14 +26,23 @@ The visual style follows a consistent pattern: **dashed stage boxes** to segment
 | **3. Confirm** | Present candidate pipelines and ask which to visualize |
 | **4. Draw** | Generate standalone HTML with dashed stage containers, colored boxes, and black arrows |
 | **5. Deliver** | Save to `diagrams/<paper-slug>-pipeline.html` and offer tweaks |
+| **6. Edit SVG** | Produce or update vector `.svg` for Inkscape / Figma / LaTeX (labels, colors, layout) |
+| **7. Export PNG** | Convert HTML diagram to high-resolution `.png` via `scripts/html_to_png.py` |
 
-**Trigger phrases:** `Draw the pipeline for DOI …`, `visualize the baselines`, `flowchart from this paper`.
+**Trigger phrases:** `Draw the pipeline for DOI …`, `visualize the baselines`, `flowchart from this paper`, `edit the SVG`, `export to PNG`.
 
-**Optional dependency** for better PDF text extraction:
+**Dependencies:**
 
 ```bash
+# PDF text extraction (optional)
 pip install pymupdf
+
+# HTML → PNG export
+pip install playwright
+playwright install chromium
 ```
+
+Or install everything: `pip install -r requirements.txt && playwright install chromium`
 
 ---
 
@@ -59,6 +68,52 @@ Diagrams follow the spec in [`references/style-guide.md`](references/style-guide
 **Example output** (generated from [Libri-Light, arXiv:1912.07875](https://arxiv.org/abs/1912.07875)):
 
 See [`examples/libri-light-cpc-pipeline.html`](examples/libri-light-cpc-pipeline.html) — CPC unsupervised baseline: Unlabeled Audio → CNN Encoder → LSTM / Transformer Predictor → InfoNCE → ABX.
+
+---
+
+## Edit SVG diagrams
+
+For vector editing (slides, papers, Inkscape/Figma), generate or edit an `.svg` alongside HTML.
+
+**Template:** [`templates/pipeline-diagram.template.svg`](templates/pipeline-diagram.template.svg)
+
+**Typical edits:**
+- Rename steps — change `<text class="box-label">…</text>`
+- Adjust colors — update `fill` on box `<rect>` (same palette as HTML)
+- Move or add boxes — edit `x`/`y`/`width`/`height` and arrow `<line>` elements
+
+Full guide: [`references/svg-editing.md`](references/svg-editing.md)
+
+**Agent prompt examples:**
+```
+Edit the SVG — rename "LSTM" to "BiLSTM" and make the Learning stage blue
+Save this pipeline as SVG for my Beamer slide
+```
+
+---
+
+## Export HTML → PNG
+
+Convert any generated HTML diagram to a high-resolution PNG:
+
+```bash
+python scripts/html_to_png.py diagrams/my-pipeline.html
+python scripts/html_to_png.py diagrams/my-pipeline.html -o figures/my-pipeline.png --scale 2
+```
+
+| Flag | Description |
+|------|-------------|
+| `--selector .diagram` | Crop to diagram region (default) |
+| `--scale 2` | Retina quality (use `3` for print) |
+| `--full-page` | Capture entire page (multi-row layouts) |
+
+Full guide: [`references/png-export.md`](references/png-export.md)
+
+**Agent prompt examples:**
+```
+Export the Libri-Light pipeline as PNG
+Turn diagrams/cpc-unsupervised-baseline.html into a 2x PNG for my paper
+```
 
 ---
 
@@ -163,6 +218,7 @@ Manual paper fetch:
 ```bash
 cd flowchart-draw
 python scripts/fetch_paper.py --doi "10.48550/arXiv.1912.07875" --output paper.json
+python scripts/html_to_png.py examples/libri-light-cpc-pipeline.html -o examples/libri-light-cpc-pipeline.png
 ```
 
 ---
@@ -177,12 +233,16 @@ flowchart-draw/
 ├── examples/                # Sample generated diagrams
 ├── references/
 │   ├── style-guide.md       # Colors, layout, CSS
+│   ├── svg-editing.md       # Vector edit workflow
+│   ├── png-export.md        # HTML → PNG export
 │   ├── detection-heuristics.md
 │   └── paper-fetch.md
 ├── templates/
-│   └── pipeline-diagram.template.html
+│   ├── pipeline-diagram.template.html
+│   └── pipeline-diagram.template.svg
 └── scripts/
-    └── fetch_paper.py
+    ├── fetch_paper.py
+    └── html_to_png.py
 ```
 
 ---

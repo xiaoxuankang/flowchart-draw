@@ -32,6 +32,32 @@ Generate two HTML files or one diagram with parallel stacks in Output stage.
 
 Report limited confidence, show draft from abstract, ask user to paste Method section or provide PDF.
 
+## Example 5 — Export PNG
+
+**User:** Export the CPC pipeline as PNG for my slide deck
+
+**Agent actions:**
+
+1. Confirm HTML exists at `diagrams/cpc-unsupervised-baseline.html`
+2. Run:
+   ```bash
+   python scripts/html_to_png.py diagrams/cpc-unsupervised-baseline.html -o diagrams/cpc-unsupervised-baseline.png --scale 2
+   ```
+3. Deliver both `.html` (editable) and `.png` (shareable) paths
+
+## Example 6 — Edit SVG
+
+**User:** Save as SVG and rename "Transformer Predictor" to "1-layer Transformer"
+
+**Agent actions:**
+
+1. Copy `templates/pipeline-diagram.template.svg` → `diagrams/cpc-baseline.svg`
+2. Fill labels from pipeline schema
+3. Edit `<text class="box-label">1-layer Transformer</text>`
+4. Tell user they can open in Inkscape/Figma for further tweaks
+
+See [references/svg-editing.md](references/svg-editing.md) and [references/png-export.md](references/png-export.md).
+
 ## Sample extracted structure (CPC-style)
 
 From an unsupervised speech baseline paper:

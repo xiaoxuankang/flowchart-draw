@@ -4,9 +4,9 @@ An agent skill that reads NLP/ML papers by **DOI or arXiv URL**, finds methodolo
 
 ## Overview
 
-![Libri-Light CPC unsupervised baseline pipeline](examples/libri-light-cpc-pipeline.png)
+![Libri-Light benchmark pipelines — three baseline settings](examples/libri-light-benchmark-pipeline.png)
 
-*Example output — CPC unsupervised baseline from [Libri-Light (arXiv:1912.07875)](https://arxiv.org/abs/1912.07875). Sources: [HTML](examples/libri-light-cpc-pipeline.html) · [PNG](examples/libri-light-cpc-pipeline.png)*
+*Example output — Libri-Light §4 baselines ([arXiv:1912.07875](https://arxiv.org/abs/1912.07875)). Open [HTML](examples/libri-light-benchmark-pipeline.html) in a browser → **Save → PNG / PDF** under the diagram.*
 
 ## Why I need flowchart-draw
 
@@ -17,7 +17,7 @@ I built **flowchart-draw** so an agent can:
 - Pull the full paper from a DOI or PDF link
 - Detect which sections are crying out for a diagram
 - Ask me which pipeline to draw (never auto-draw without confirmation)
-- Output a clean, self-contained HTML flowchart I can open in any browser
+- Output a clean, self-contained HTML flowchart — preview in browser, then **Save as PNG or PDF**
 
 The visual style follows a consistent pattern: **dashed stage boxes** to segment phases, **colored step boxes** inside each stage, and **black arrows** for process order — the kind of diagram papers should have included in the first place.
 
@@ -31,11 +31,11 @@ The visual style follows a consistent pattern: **dashed stage boxes** to segment
 | **2. Detect** | Scan Method / Baselines / Architecture sections for sequential pipeline descriptions that lack nearby figures |
 | **3. Confirm** | Present candidate pipelines and ask which to visualize |
 | **4. Draw** | Generate standalone HTML with dashed stage containers, colored boxes, and black arrows |
-| **5. Deliver** | Save to `diagrams/<paper-slug>-pipeline.html` and offer tweaks |
+| **5. Deliver** | Save to `diagrams/<paper-slug>-pipeline.html`; in-browser **Save → PNG / PDF** buttons included |
 | **6. Edit SVG** | Produce or update vector `.svg` for Inkscape / Figma / LaTeX (labels, colors, layout) |
-| **7. Export PNG** | Convert HTML diagram to high-resolution `.png` via `scripts/html_to_png.py` |
+| **7. Export (CLI)** | Optional batch PNG via `scripts/html_to_png.py` (Playwright) |
 
-**Trigger phrases:** `Draw the pipeline for DOI …`, `visualize the baselines`, `flowchart from this paper`, `edit the SVG`, `export to PNG`.
+**Trigger phrases:** `Draw the pipeline for DOI …`, `visualize the baselines`, `export to PNG/PDF`, `edit the SVG`.
 
 **Dependencies:**
 
@@ -71,7 +71,7 @@ Diagrams follow the spec in [`references/style-guide.md`](references/style-guide
 - Optional input icon block on the far left (documents, audio waveform, etc.)
 - White background, no dark theme — suitable for papers and slides
 
-**Example output** (generated from [Libri-Light, arXiv:1912.07875](https://arxiv.org/abs/1912.07875)) — see [Overview](#overview) above, or [`examples/libri-light-cpc-pipeline.html`](examples/libri-light-cpc-pipeline.html).
+**Example output** — see [Overview](#overview) or [`examples/libri-light-benchmark-pipeline.html`](examples/libri-light-benchmark-pipeline.html).
 
 ---
 
@@ -96,9 +96,9 @@ Save this pipeline as SVG for my Beamer slide
 
 ---
 
-## Export HTML → PNG
+## Export HTML → PNG (optional CLI)
 
-Convert any generated HTML diagram to a high-resolution PNG:
+Every HTML diagram includes a **Save** bar (PNG / PDF) — no CLI needed for one-off exports. See [`references/save-button.md`](references/save-button.md). For batch or headless use:
 
 ```bash
 python scripts/html_to_png.py diagrams/my-pipeline.html
@@ -238,12 +238,14 @@ flowchart-draw/
 ├── references/
 │   ├── style-guide.md       # Colors, layout, CSS
 │   ├── svg-editing.md       # Vector edit workflow
-│   ├── png-export.md        # HTML → PNG export
+│   ├── png-export.md        # CLI HTML → PNG
+│   ├── save-button.md       # In-browser Save → PNG / PDF
 │   ├── detection-heuristics.md
 │   └── paper-fetch.md
 ├── templates/
 │   ├── pipeline-diagram.template.html
-│   └── pipeline-diagram.template.svg
+│   ├── pipeline-diagram.template.svg
+│   └── diagram-save.js
 └── scripts/
     ├── fetch_paper.py
     └── html_to_png.py

@@ -68,16 +68,19 @@ Stage dashed border default: `#c8c8c8`. Optional themed borders:
   border-radius: 18px;
   padding: 28px 24px 22px;
   position: relative;
+  overflow: visible;
 }
 .stage-title {
   position: absolute;
-  top: -13px;
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background: #fff;
-  padding: 0 12px;
+  padding: 2px 12px;
   font-size: 17px;
   font-weight: 700;
+  line-height: 1.2;
+  z-index: 2;
 }
 .box {
   border-radius: 14px;
@@ -88,20 +91,37 @@ Stage dashed border default: `#c8c8c8`. Optional themed borders:
 }
 .arrow {
   width: 36px;
-  height: 2px;
-  background: #333;
+  height: 12px;
   position: relative;
+  background: transparent;
+  align-self: center;
+}
+.arrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 8px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: #333;
 }
 .arrow::after {
   content: "";
   position: absolute;
-  right: -1px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
   border-left: 8px solid #333;
 }
+.diagram {
+  overflow: visible;
+  padding-top: 14px;
+}
 ```
+
+**Important:** Do not set `overflow-x: auto` on `.diagram` — it clips stage titles that sit above the dashed border. Wrap in `.diagram-scroll { overflow-x: auto; }` instead if horizontal scroll is needed.
 
 ## Layout rules
 
@@ -124,7 +144,8 @@ Stage dashed border default: `#c8c8c8`. Optional themed borders:
 
 Before delivering, verify:
 
-- [ ] Every stage has a visible dashed border and title
+- [ ] Stage titles fully visible (not clipped by overflow)
+- [ ] Arrow lines end cleanly at arrowhead (no line stub past tip)
 - [ ] Arrow count matches logical flow (no orphan boxes)
 - [ ] Colors are consistent within each stage
 - [ ] Labels match paper terminology (model names, loss names)

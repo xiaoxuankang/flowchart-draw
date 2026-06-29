@@ -24,6 +24,8 @@
       gap: 0;
       max-width: 1200px;
       flex-wrap: nowrap;
+      overflow: visible;
+      padding-top: 14px;
     }
 
     /* ── Input block (optional — remove if not needed) ── */
@@ -76,20 +78,32 @@
       color: #666;
     }
 
-    /* ── Arrows ── */
+    /* ── Arrows: line stops at arrowhead ── */
     .arrow {
       flex-shrink: 0;
       width: 36px;
-      height: 2px;
-      background: #333;
+      height: 12px;
       position: relative;
       margin: 0 4px;
+      background: transparent;
+      align-self: center;
+    }
+
+    .arrow::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 8px;
+      top: 50%;
+      height: 2px;
+      margin-top: -1px;
+      background: #333;
     }
 
     .arrow::after {
       content: "";
       position: absolute;
-      right: -1px;
+      right: 0;
       top: 50%;
       transform: translateY(-50%);
       border: 5px solid transparent;
@@ -103,19 +117,22 @@
       padding: 28px 24px 22px;
       position: relative;
       flex-shrink: 0;
+      overflow: visible;
     }
 
     .stage-title {
       position: absolute;
-      top: -13px;
+      top: 0;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       background: #fff;
-      padding: 0 12px;
+      padding: 2px 12px;
       font-size: 17px;
       font-weight: 700;
       color: #222;
       white-space: nowrap;
+      line-height: 1.2;
+      z-index: 2;
     }
 
     .stage-inner {

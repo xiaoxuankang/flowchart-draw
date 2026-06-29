@@ -32,7 +32,13 @@ Generate two HTML files or one diagram with parallel stacks in Output stage.
 
 Report limited confidence, show draft from abstract, ask user to paste Method section or provide PDF.
 
-## Example 5 — Export PNG
+## Example 5 — Save from browser
+
+**User:** Export this diagram as PNG for my slide
+
+**Agent:** Tell user to open the `.html` file and click **Save → PNG** under the diagram. Filename comes from the page `<title>`.
+
+## Example 6 — CLI PNG (batch)
 
 **User:** Export the CPC pipeline as PNG for my slide deck
 
@@ -45,7 +51,7 @@ Report limited confidence, show draft from abstract, ask user to paste Method se
    ```
 3. Deliver both `.html` (editable) and `.png` (shareable) paths
 
-## Example 6 — Edit SVG
+## Example 7 — Edit SVG
 
 **User:** Save as SVG and rename "Transformer Predictor" to "1-layer Transformer"
 

@@ -149,4 +149,4 @@ Before delivering, verify:
 - [ ] Arrow count matches logical flow (no orphan boxes)
 - [ ] Colors are consistent within each stage
 - [ ] Labels match paper terminology (model names, loss names)
-- [ ] Caption at bottom: `Author Year · Pipeline name · Source section`
+- [ ] Save bar present below caption (PNG + PDF buttons)

@@ -4,10 +4,11 @@ description: >
   Reads NLP/ML papers by DOI, detects methodology or baseline sections that
   describe pipelines in prose without flowcharts, and generates colored HTML
   pipeline diagrams (dashed stage boxes, colored step boxes, black arrows).
-  Also supports editing SVG diagrams and exporting HTML diagrams to PNG.
+  Also supports editing SVG diagrams and exporting HTML diagrams to PNG/PDF
+  via an in-page Save button or scripts/html_to_png.py.
   Use when user gives a paper DOI, asks to visualize a baseline/pipeline/architecture,
   wants a flowchart from a paper, mentions NLP pipeline diagrams, SVG edits,
-  or HTML to PNG export.
+  or HTML to PNG/PDF export.
 ---
 
 # Flowchart Draw
@@ -37,8 +38,8 @@ Flowchart Draw Progress:
 - [ ] Step 3: Present candidates and ask user to confirm
 - [ ] Step 4: Extract structured pipeline (stages, steps, order, I/O)
 - [ ] Step 5: Generate HTML diagram (style guide)
-- [ ] Step 6: Save file and show preview path
-- [ ] Step 7 (optional): Export PNG and/or provide editable SVG
+- [ ] Step 6: Save file and show preview path (with Save → PNG / PDF buttons)
+- [ ] Step 7 (optional): Provide editable SVG
 ```
 
 ## Step 1 — Fetch paper
@@ -130,6 +131,11 @@ Follow [references/style-guide.md](references/style-guide.md) exactly:
 Start from [templates/pipeline-diagram.template.html](templates/pipeline-diagram.template.html).
 See [examples/libri-light-cpc-pipeline.html](examples/libri-light-cpc-pipeline.html) for a worked output.
 
+**Always include the Save bar** (see [references/save-button.md](references/save-button.md)):
+- Wrap diagram content in `<div id="export-root">`
+- Add Save → **PNG** / **PDF** buttons below the caption
+- Inline export script from [templates/diagram-save.js](templates/diagram-save.js) + html2canvas & jsPDF CDN
+
 Save to `diagrams/<slug>-pipeline.html` (workspace) or user-specified path.
 Use a filesystem-safe slug from paper title + pipeline name.
 
@@ -137,9 +143,9 @@ Use a filesystem-safe slug from paper title + pipeline name.
 
 Tell the user:
 - Saved file path
-- How to open (`file://` or `Open with Live Server`)
+- How to open in browser — use **Save → PNG** or **Save → PDF** under the diagram
 - One-sentence summary of what the diagram shows
-- Offer PNG export, SVG edit, color/step tweaks, or another candidate
+- Offer SVG edit, color/step tweaks, or another candidate
 
 ## Step 7 — SVG editing (optional)
 
@@ -155,19 +161,17 @@ When the user wants a **vector-editable** diagram (slides, LaTeX, Inkscape/Figma
 
 Offer SVG when user says: "edit in vector", "for my slide", "export svg", "inkscape".
 
-## Step 8 — HTML → PNG export (optional)
+## Step 8 — HTML → PNG export (optional CLI)
 
-After HTML is saved, export a shareable PNG:
+For headless/batch export without opening a browser, use:
 
 ```bash
 python scripts/html_to_png.py diagrams/<slug>-pipeline.html -o diagrams/<slug>-pipeline.png --scale 2
 ```
 
-- Default crops to `.diagram` selector with padding
-- Use `--full-page` for multi-row layouts (class `.rows`)
-- Requires: `pip install playwright && playwright install chromium`
+In-browser export is preferred — every HTML diagram includes **Save → PNG / PDF** buttons.
 
-See [references/png-export.md](references/png-export.md) for flags and troubleshooting.
+See [references/png-export.md](references/png-export.md) and [references/save-button.md](references/save-button.md).
 
 Offer PNG when user says: "export png", "for my paper", "screenshot", "embed in README".
 
@@ -179,13 +183,15 @@ Offer PNG when user says: "export png", "for my paper", "screenshot", "embed in 
 | Match paper colors | Swap `box-*` classes per stage theme |
 | Simpler diagram | Collapse substeps into one box with `<small>` details |
 | Edit SVG | Update `.svg` text/fills; see svg-editing.md |
-| Export PNG | Run `scripts/html_to_png.py` on the `.html` file |
+| Export PNG | User clicks **Save → PNG**, or run `scripts/html_to_png.py` |
+| Export PDF | User clicks **Save → PDF** in the HTML preview |
 
 ## Additional references
 
 - Visual spec: [references/style-guide.md](references/style-guide.md)
 - SVG editing: [references/svg-editing.md](references/svg-editing.md)
 - PNG export: [references/png-export.md](references/png-export.md)
+- Save button: [references/save-button.md](references/save-button.md)
 - Detection rules: [references/detection-heuristics.md](references/detection-heuristics.md)
 - DOI fallbacks: [references/paper-fetch.md](references/paper-fetch.md)
 - Worked example: [EXAMPLES.md](EXAMPLES.md)

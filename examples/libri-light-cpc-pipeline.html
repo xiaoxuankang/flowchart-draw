@@ -187,18 +187,41 @@
       flex-shrink: 0;
     }
 
-    /* caption below diagram */
     .caption-wrap {
-      position: fixed;
-      bottom: 16px;
-      left: 0; right: 0;
+      margin-top: 28px;
       text-align: center;
       font-size: 12px;
       color: #999;
     }
+
+    .save-bar {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .save-label { font-size: 14px; font-weight: 700; color: #444; }
+    .save-bar button {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1.5px solid #333;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+      cursor: pointer;
+    }
+    .save-bar button:hover { background: #f5f5f5; }
+    .save-bar button:disabled { opacity: 0.5; cursor: wait; }
+    .save-status { font-size: 12px; color: #666; min-height: 1em; }
   </style>
 </head>
 <body>
+
+  <div id="export-root" class="export-root">
 
   <div class="diagram" id="diagram">
 
@@ -274,6 +297,21 @@
   </div>
 
   <div class="caption-wrap">Libri-light · Unsupervised baseline · CPC</div>
+
+  </div><!-- /export-root -->
+
+  <div class="save-bar" aria-label="Export diagram">
+    <span class="save-label">Save</span>
+    <button type="button" id="btn-save-png">PNG</button>
+    <button type="button" id="btn-save-pdf">PDF</button>
+    <span class="save-status" id="save-status"></span>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+  (function(){function slugify(t){return(t||"pipeline-diagram").replace(/[^\w\s\-]/g,"").trim().replace(/\s+/g,"-").toLowerCase()||"pipeline-diagram"}function setStatus(m){var e=document.getElementById("save-status");if(e)e.textContent=m||""}function captureRoot(){var r=document.getElementById("export-root");if(!r)throw new Error("Missing #export-root");return r}function renderCanvas(r){if(typeof html2canvas!=="function")throw new Error("html2canvas not loaded");return html2canvas(r,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false,scrollX:0,scrollY:-window.scrollY,windowWidth:r.scrollWidth,windowHeight:r.scrollHeight})}function downloadBlob(h,f){var l=document.createElement("a");l.download=f;l.href=h;l.click()}async function savePng(){var b=document.getElementById("btn-save-png");if(b)b.disabled=true;setStatus("Generating PNG…");try{var c=await renderCanvas(captureRoot()),n=slugify(document.title)+".png";downloadBlob(c.toDataURL("image/png"),n);setStatus("Saved "+n)}catch(e){setStatus("PNG failed: "+e.message);console.error(e)}finally{if(b)b.disabled=false}}async function savePdf(){var b=document.getElementById("btn-save-pdf");if(b)b.disabled=true;setStatus("Generating PDF…");try{if(!window.jspdf||!window.jspdf.jsPDF)throw new Error("jsPDF not loaded");var c=await renderCanvas(captureRoot()),img=c.toDataURL("image/png"),w=c.width,h=c.height,pdf=new window.jspdf.jsPDF({orientation:w>h?"landscape":"portrait",unit:"px",format:[w,h],hotfixes:["px_scaling"]});pdf.addImage(img,"PNG",0,0,w,h);var n=slugify(document.title)+".pdf";pdf.save(n);setStatus("Saved "+n)}catch(e){setStatus("PDF failed: "+e.message);console.error(e)}finally{if(b)b.disabled=false}}function init(){var p=document.getElementById("btn-save-png"),d=document.getElementById("btn-save-pdf");if(p)p.addEventListener("click",savePng);if(d)d.addEventListener("click",savePdf)}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init()})();
+  </script>
 
 </body>
 </html>
